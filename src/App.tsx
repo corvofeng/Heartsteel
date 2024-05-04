@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import MyThree from './tree'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -28,6 +29,20 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+
+      <div className="heart">
+        <MyThree
+          width={300}
+          height={300}
+        />
+      </div>
+      {/* <div className="heart"> */}
+            {/* <div id="waifu-tips"></div>
+            <div id="live2d" >
+              <img id="live2d" src="https://rawforcorvofeng.cn/blog/2024/03/31/1711861460417.png" />
+            </div>
+            <div id="waifu-tool"></div> */}
+      {/* </div> */}
     </>
   )
 }

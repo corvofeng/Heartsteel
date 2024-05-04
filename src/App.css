@@ -1,4 +1,4 @@
-#root {
+#heartsteel-root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -39,4 +39,15 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.heart {
+	left: 0;
+	line-height: 0;
+	margin-bottom: -10px;
+  background: #000;
+	position: fixed;
+	transform: translateY(3px);
+	transition: transform .3s ease-in-out, bottom 3s ease-in-out;
+	z-index: 1;
 }

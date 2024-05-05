@@ -10,7 +10,7 @@ function MyThree(props: { width: number, height: number }) {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('jsm/libs/draco/');
     const gltfLoader = new GLTFLoader();
-    var renderer = new THREE.WebGLRenderer( { antialias: true } );
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(props.width, props.height);
     renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -29,16 +29,16 @@ function MyThree(props: { width: number, height: number }) {
     // === THREE.JS CODE START ===
     console.log("Add gltf scene")
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 50, props.width / props.height, 0.1, 20 );
-    
+    var camera = new THREE.PerspectiveCamera(50, props.width / props.height, 0.1, 20);
+
     // var camera = new THREE.PerspectiveCamera(70, props.width/props.height, 0.1, 1000);
 
 
-    camera.position.set( 0, 0.3, 1.25 );
+    camera.position.set(0, 0.3, 1.25);
     // camera.updateProjectionMatrix();
 
     // gltf.scene.scale.set( 0.008, 0.008, 0.008 );
-    gltf.scene.scale.set( 0.004, 0.004, 0.004 );
+    gltf.scene.scale.set(0.004, 0.004, 0.004);
 
     // gltf.scene.scale.multiplyScalar(1 / 100); // adjust scalar factor to match your scene scale
     // gltf.scene.position.x = 20; // once rescaled, position the model where needed
@@ -57,27 +57,27 @@ function MyThree(props: { width: number, height: number }) {
     // }
     // window.addEventListener( 'resize', onWindowResize );
 
-    const controls = new OrbitControls( camera, renderer.domElement );
+    const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.minDistance = 1;
     controls.maxDistance = 10;
-    controls.target.set( 0, 0.35, 0 );
+    controls.target.set(0, 0.35, 0);
     controls.update();
 
     const animations = gltf.animations;
     const clock = new THREE.Clock();
 
-    const mixer = new THREE.AnimationMixer( gltf.scene );
-    let act = mixer.clipAction( animations[ 3 ] )
+    const mixer = new THREE.AnimationMixer(gltf.scene);
+    let act = mixer.clipAction(animations[3])
     act.play()
 
 
     scene.add(gltf.scene);
 
-    const environment = new RoomEnvironment( renderer );
-		const pmremGenerator = new THREE.PMREMGenerator( renderer );
-    scene.background = new THREE.Color( 0xbbbbbb );
-		scene.environment = pmremGenerator.fromScene( environment ).texture;
+    const environment = new RoomEnvironment(renderer);
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.background = new THREE.Color(0xbbbbbb);
+    scene.environment = pmremGenerator.fromScene(environment).texture;
 
     // camera.position.z = 5;
     var animate = function () {
@@ -94,9 +94,9 @@ function MyThree(props: { width: number, height: number }) {
   // if (model === undefined) {
   //   return <div>Loading...</div>;
   // } else {
-    return (
-      <div ref={refContainer}></div>
-    );
+  return (
+    <div ref={refContainer}></div>
+  );
   // }
 }
 

@@ -33,21 +33,12 @@ function MyThree(props: { width: number, height: number }) {
     console.log("Add gltf scene")
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(50, props.width / props.height, 0.1, 20);
-    camera.position.set(0, 0.3, 1.25);
+    camera.position.set(0.1, 0.4, 1.25);
     // camera.updateProjectionMatrix();
 
     // gltf.scene.scale.set( 0.008, 0.008, 0.008 );
-    gltf.scene.scale.set(0.004, 0.004, 0.004);
-
-    // gltf.scene.scale.multiplyScalar(1 / 100); // adjust scalar factor to match your scene scale
-    // gltf.scene.position.x = 20; // once rescaled, position the model where needed
-    // gltf.scene.position.z = -20;
-
-    // use ref as a mount point of the Three.js scene instead of the document.body
-    // var geometry = new THREE.BoxGeometry(1, 1, 1);
-    // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // var cube = new THREE.Mesh(geometry, material);
-    // scene.add(cube);
+    const scale = 0.005
+    gltf.scene.scale.set(scale, scale, scale);
 
     // function onWindowResize() {
     //   camera.aspect = window.innerWidth / window.innerHeight;
@@ -56,41 +47,36 @@ function MyThree(props: { width: number, height: number }) {
     // }
     // window.addEventListener( 'resize', onWindowResize );
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.minDistance = 1;
-    controls.maxDistance = 10;
-    controls.target.set(0, 0.35, 0);
-    controls.update();
-
     const animations = gltf.animations;
     const clock = new THREE.Clock();
     const mixer = new THREE.AnimationMixer(gltf.scene);
 
     let act = mixer.clipAction(animations[3])
     act.play()
-    // gltf.scene.background = new THREE.Color(0xccc);
-    // gltf.scene.background = null;
-    // gltf.scene.background = transparent;
 
     scene.add(gltf.scene);
 
-    // var light = new THREE.PointLight(0xffffff, 1, Infinity);
-    // camera.add(light);
+    const debug = false;
 
+    // In Debug Mode
+    if (debug) {
+      const environment = new RoomEnvironment(renderer);
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmremGenerator.fromScene(environment).texture;
+      scene.background = new THREE.Color(0xbbbbbb);
 
-    // const environment = new RoomEnvironment(renderer);
-    // const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      console.log(controls.object.position);
+      controls.enableDamping = true;
+      controls.minDistance = 1;
+      controls.maxDistance = 10;
+      controls.target.set(0, 0.35, 0);
+      controls.update();
+      controls.addEventListener("change", () => {
+        console.log(controls.object.position);
+      })
+    }
 
-    // scene.background = new THREE.Color(0xbbbbbb);
-    // scene.environment = pmremGenerator.fromScene(environment).texture;
-    // renderer.setClearColor( 0x000000, 0 );
-    // renderer.setClearColor( 0x000000, 0 ); // the default
-    // renderer.setClearColor(0xb9d3ff, 0);
-
-    // renderer.setClearColor(0xcccccc, 0);
-
-    // camera.position.z = 5;
     var animate = function () {
       requestAnimationFrame(animate);
       // cube.rotation.x += 0.01;

@@ -10,7 +10,10 @@ function MyThree(props: { width: number, height: number }) {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('jsm/libs/draco/');
     const gltfLoader = new GLTFLoader();
-    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    var renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true
+    });
     renderer.setSize(props.width, props.height);
     renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -30,10 +33,6 @@ function MyThree(props: { width: number, height: number }) {
     console.log("Add gltf scene")
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(50, props.width / props.height, 0.1, 20);
-
-    // var camera = new THREE.PerspectiveCamera(70, props.width/props.height, 0.1, 1000);
-
-
     camera.position.set(0, 0.3, 1.25);
     // camera.updateProjectionMatrix();
 
@@ -66,18 +65,30 @@ function MyThree(props: { width: number, height: number }) {
 
     const animations = gltf.animations;
     const clock = new THREE.Clock();
-
     const mixer = new THREE.AnimationMixer(gltf.scene);
+
     let act = mixer.clipAction(animations[3])
     act.play()
-
+    // gltf.scene.background = new THREE.Color(0xccc);
+    // gltf.scene.background = null;
+    // gltf.scene.background = transparent;
 
     scene.add(gltf.scene);
 
-    const environment = new RoomEnvironment(renderer);
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    scene.background = new THREE.Color(0xbbbbbb);
-    scene.environment = pmremGenerator.fromScene(environment).texture;
+    // var light = new THREE.PointLight(0xffffff, 1, Infinity);
+    // camera.add(light);
+
+
+    // const environment = new RoomEnvironment(renderer);
+    // const pmremGenerator = new THREE.PMREMGenerator(renderer);
+
+    // scene.background = new THREE.Color(0xbbbbbb);
+    // scene.environment = pmremGenerator.fromScene(environment).texture;
+    // renderer.setClearColor( 0x000000, 0 );
+    // renderer.setClearColor( 0x000000, 0 ); // the default
+    // renderer.setClearColor(0xb9d3ff, 0);
+
+    // renderer.setClearColor(0xcccccc, 0);
 
     // camera.position.z = 5;
     var animate = function () {
@@ -88,14 +99,13 @@ function MyThree(props: { width: number, height: number }) {
       mixer.update(clock.getDelta());
     };
     animate();
-    // renderer.render(scene, camera);
   }
 
   // if (model === undefined) {
   //   return <div>Loading...</div>;
   // } else {
   return (
-    <div ref={refContainer}></div>
+    <div className="heart" ref={refContainer}></div>
   );
   // }
 }

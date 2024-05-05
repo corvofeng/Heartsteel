@@ -30,11 +30,8 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
 
+      <MyThree width={300} height={300} />
       <div className="heart">
-        <MyThree
-          width={300}
-          height={300}
-        />
       </div>
       {/* <div className="heart"> */}
             {/* <div id="waifu-tips"></div>

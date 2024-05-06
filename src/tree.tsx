@@ -3,6 +3,10 @@ import * as THREE from 'three';
 import { useEffect, useRef, useState } from "react";
 import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls } from 'three/examples/jsm/Addons.js';
 
+function isDebug() {
+  return process.env.NODE_ENV === 'development';
+}
+
 function MyThree(props: { width: number, height: number }) {
   const refContainer = useRef(null);
   const [_, setModelData] = useState<GLTF>();
@@ -18,7 +22,7 @@ function MyThree(props: { width: number, height: number }) {
     renderer.setPixelRatio(window.devicePixelRatio);
 
     async function fetchData() {
-      const gltf = await gltfLoader.loadAsync('models/arcanist-zoe.glb');
+      const gltf = await gltfLoader.loadAsync('https://model.rawforcorvofeng.cn/arcanist-zoe.glb');
       setModelData(gltf);
       console.log("Set Model gltf", gltf);
       createModelView(renderer, gltf);
@@ -56,10 +60,8 @@ function MyThree(props: { width: number, height: number }) {
 
     scene.add(gltf.scene);
 
-    const debug = false;
-
     // In Debug Mode
-    if (debug) {
+    if (isDebug()) {
       const environment = new RoomEnvironment(renderer);
       const pmremGenerator = new THREE.PMREMGenerator(renderer);
       scene.environment = pmremGenerator.fromScene(environment).texture;

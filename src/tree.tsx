@@ -1,14 +1,11 @@
 import * as THREE from 'three';
 
 import Stats from 'three/addons/libs/stats.module.js';
-import { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls } from 'three/examples/jsm/Addons.js';
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { isDebug } from './utils/debug.tsx';
 
-function isDebug() {
-  // return false;
-  return process.env.NODE_ENV === 'development';
-}
 
 function MyThree(props: { width: number, height: number, hsAction: string }) {
   const [_, setModelData] = useState<GLTF>();
@@ -51,7 +48,7 @@ function MyThree(props: { width: number, height: number, hsAction: string }) {
   const createGUI = (actions: Map<string, THREE.AnimationAction>, activeAction: THREE.AnimationAction) => {
     const gui = new GUI({ width: 280 });
     const states: string[] = [];
-    
+
     actions.forEach((_, key) => {
       states.push(key);
     });
@@ -107,7 +104,7 @@ function MyThree(props: { width: number, height: number, hsAction: string }) {
     // camera.updateProjectionMatrix();
 
     // gltf.scene.scale.set( 0.008, 0.008, 0.008 );
-    const scale = 0.005
+    const scale = 0.0035
     gltf.scene.scale.set(scale, scale, scale);
 
     // function onWindowResize() {

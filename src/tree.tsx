@@ -2,19 +2,24 @@ import * as THREE from 'three';
 
 import Stats from 'three/addons/libs/stats.module.js';
 import { useEffect, useRef, useState } from "react";
-import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls } from 'three/examples/jsm/Addons.js';
+import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls, HueSaturationShader } from 'three/examples/jsm/Addons.js';
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { isDebug } from './utils/debug.tsx';
+import 'react-circular-progressbar/dist/styles.css';
 
+export interface HSAttr {
+  hsAction: string
+  width: number
+  height: number
+}
 
-function MyThree(props: { width: number, height: number, hsAction: string }) {
-  const [_, setModelData] = useState<GLTF>();
-  let refContainer = useRef(null);
+function MyThree(props:  HSAttr ) {
+  const refContainer = useRef(null);
   useEffect(() => {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('jsm/libs/draco/');
     const gltfLoader = new GLTFLoader();
-    var renderer = new THREE.WebGLRenderer({
+    const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true
     });
@@ -31,8 +36,6 @@ function MyThree(props: { width: number, height: number, hsAction: string }) {
 
     async function fetchData() {
       const gltf = await gltfLoader.loadAsync('https://model.rawforcorvofeng.cn/arcanist-zoe.glb');
-      setModelData(gltf);
-      console.log("Set Model gltf", gltf);
       createModelView(container, renderer, gltf);
     }
     fetchData().catch(console.error);
@@ -98,8 +101,8 @@ function MyThree(props: { width: number, height: number, hsAction: string }) {
   const createModelView = (container: HTMLElement, renderer: THREE.WebGLRenderer, gltf: GLTF) => {
     // === THREE.JS CODE START ===
     console.log("Add gltf scene")
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(50, props.width / props.height, 0.1, 20);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, props.width / props.height, 0.1, 20);
     camera.position.set(0.1, 0.1, 1.25);
     // camera.updateProjectionMatrix();
 
@@ -160,7 +163,7 @@ function MyThree(props: { width: number, height: number, hsAction: string }) {
       }
     }
 
-    var animate = function () {
+    const animate = function () {
       beforeAnimate();
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
@@ -170,13 +173,23 @@ function MyThree(props: { width: number, height: number, hsAction: string }) {
     animate();
   }
 
-  // if (model === undefined) {
-  //   return <div>Loading...</div>;
-  // } else {
   return (
-    <div className="heart" ref={refContainer}></div>
+
+    <div style={{ width: props.width, height: props.height }}>
+      <div className="heart" ref={refContainer}></div>
+      {/* <progress id="file" max="100" value="70">70%</progress> */}
+      {/* <div class="progress">
+  <div class="progress-bar" role="progressbar" aria-valuenow="70"
+  aria-valuemin="0" aria-valuemax="100" style="width:70%">
+    <span class="sr-only">70% Complete</span>
+  </div>
+</div> */}
+      {/* <CircularProgressbar value={66} /> */}
+    </div>
+
   );
-  // }
 }
 
-export default MyThree
+export {
+  MyThree
+}

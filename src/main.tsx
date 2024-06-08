@@ -16,7 +16,7 @@ const hsAttr: HSAttr = {
   scale: Number(document.getElementById('heartsteel-root')!.getAttribute('hs-scale')!),
   height: Number(document.getElementById('heartsteel-root')!.getAttribute('hs-height')!),
   action: document.getElementById('heartsteel-root')!.getAttribute('hs-action')!,
-  model: document.getElementById('heartsteel-root')!.getAttribute('hs-model')!,
+  modelPath: document.getElementById('heartsteel-root')!.getAttribute('hs-model')!,
   debugMode: document.getElementById('heartsteel-root')!.getAttribute('hs-mode')! == "debug",
 };
 console.log("Get hsAttr: ", hsAttr);

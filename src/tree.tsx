@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 
 import Stats from 'three/addons/libs/stats.module.js';
-import { useEffect, useRef } from "react";
-import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls,} from 'three/examples/jsm/Addons.js';
+import { useEffect, useRef, useState } from "react";
+import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls } from 'three/examples/jsm/Addons.js';
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js';
 // import { isDebug } from './utils/debug.tsx';
-import 'react-circular-progressbar/dist/styles.css';
+// import 'react-circular-progressbar/dist/styles.css';
 
 export interface HSAttr {
   width: number
@@ -14,11 +14,13 @@ export interface HSAttr {
 
   action: string
   debugMode: boolean
-  model: string
+  modelPath: string
 }
 
-function MyThree(props:  HSAttr ) {
+function MyThree(props: HSAttr) {
   const refContainer = useRef(null);
+  const [progressPercentage, setProgressPercentage] = useState(0);
+
   useEffect(() => {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('jsm/libs/draco/');
@@ -37,9 +39,11 @@ function MyThree(props:  HSAttr ) {
     } else {
       return
     }
-
     async function fetchData() {
-      const gltf = await gltfLoader.loadAsync(props.model);
+      const gltf = await gltfLoader.loadAsync(props.modelPath, onprogress = (event) => {
+        const { loaded, total } = event;
+        setProgressPercentage(1.0 * loaded / total * 100)
+      });
       createModelView(container, renderer, gltf);
     }
     fetchData().catch(console.error);
@@ -180,19 +184,23 @@ function MyThree(props:  HSAttr ) {
   }
 
   return (
-
-    <div style={{ width: props.width, height: props.height }}>
+    <div style={{
+       width: props.width, height: props.height,
+       position: "fixed",
+       bottom: 0,
+       left: 0, 
+       zIndex: 2,
+     }}>
       <div className="heart" ref={refContainer}></div>
-      {/* <progress id="file" max="100" value="70">70%</progress> */}
-      {/* <div class="progress">
-  <div class="progress-bar" role="progressbar" aria-valuenow="70"
-  aria-valuemin="0" aria-valuemax="100" style="width:70%">
-    <span class="sr-only">70% Complete</span>
-  </div>
-</div> */}
-      {/* <CircularProgressbar value={66} /> */}
+      {progressPercentage < 99.9 && (
+      <progress style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+      }}
+       max="100" value={progressPercentage}>{progressPercentage}%</progress>
+      )}
     </div>
-
   );
 }
 

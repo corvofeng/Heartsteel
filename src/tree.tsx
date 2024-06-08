@@ -1,16 +1,20 @@
 import * as THREE from 'three';
 
 import Stats from 'three/addons/libs/stats.module.js';
-import { useEffect, useRef, useState } from "react";
-import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls, HueSaturationShader } from 'three/examples/jsm/Addons.js';
+import { useEffect, useRef } from "react";
+import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls,} from 'three/examples/jsm/Addons.js';
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js';
-import { isDebug } from './utils/debug.tsx';
+// import { isDebug } from './utils/debug.tsx';
 import 'react-circular-progressbar/dist/styles.css';
 
 export interface HSAttr {
-  hsAction: string
   width: number
   height: number
+  scale: number
+
+  action: string
+  debugMode: boolean
+  model: string
 }
 
 function MyThree(props:  HSAttr ) {
@@ -35,7 +39,7 @@ function MyThree(props:  HSAttr ) {
     }
 
     async function fetchData() {
-      const gltf = await gltfLoader.loadAsync('https://model.rawforcorvofeng.cn/arcanist-zoe.glb');
+      const gltf = await gltfLoader.loadAsync(props.model);
       createModelView(container, renderer, gltf);
     }
     fetchData().catch(console.error);
@@ -107,7 +111,9 @@ function MyThree(props:  HSAttr ) {
     // camera.updateProjectionMatrix();
 
     // gltf.scene.scale.set( 0.008, 0.008, 0.008 );
-    const scale = 0.0035
+    // const scale = 0.0035
+    // const scale = 0.5
+    const scale = props.scale;
     gltf.scene.scale.set(scale, scale, scale);
 
     // function onWindowResize() {
@@ -128,15 +134,15 @@ function MyThree(props:  HSAttr ) {
     scene.add(gltf.scene);
 
     let activeAction: THREE.AnimationAction = actions.values().next().value as THREE.AnimationAction;
-    if (props.hsAction && actions.has(props.hsAction)) {
-      activeAction = actions.get(props.hsAction) as THREE.AnimationAction;
+    if (props.action && actions.has(props.action)) {
+      activeAction = actions.get(props.action) as THREE.AnimationAction;
       activeAction.play();
     }
 
     // For Debug animation
     let beforeAnimate = () => { }, afterAnimate = () => { };
     // In Debug Mode
-    if (isDebug()) {
+    if (props.debugMode) {
       createGUI(actions, activeAction);
       const environment = new RoomEnvironment(renderer);
       const pmremGenerator = new THREE.PMREMGenerator(renderer);

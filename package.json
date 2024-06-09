@@ -1,7 +1,9 @@
 {
-  "name": "vite-react-typescript-starter",
-  "private": true,
+  "name": "@corvo-publish/heartsteel",
   "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -10,8 +10,8 @@ export default defineConfig({
       rollupOptions: {
           output: {
               dir: 'dist/assets/',
-              entryFileNames: `plugin-${version}.js`,
-              assetFileNames: 'plugin.css',
+              entryFileNames: 'heartsteel.js',
+              assetFileNames: 'heartsteel.css',
               chunkFileNames: "chunk.js",
               manualChunks: undefined,
           }

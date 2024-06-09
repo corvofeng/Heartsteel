@@ -17,6 +17,10 @@ jobs:
           node-version: 21
           registry-url: "https://registry.npmjs.org"
       - run: echo $GITHUB_REF
+      - run: |
+          branch=${GITHUB_REF##*/}
+          sed -i "s/\"version\": \".*\"/\"version\": \"$branch\"/g" package.json
+
       - run: yarn
       - run: yarn build
       - run: npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"

@@ -4,24 +4,46 @@ import Stats from 'three/addons/libs/stats.module.js';
 import { useEffect, useRef, useState } from "react";
 import { GLTF, DRACOLoader, GLTFLoader, RoomEnvironment, OrbitControls } from 'three/examples/jsm/Addons.js';
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js';
-// import { isDebug } from './utils/debug.tsx';
 // import 'react-circular-progressbar/dist/styles.css';
 
 export interface HSAttr {
-  width: number
-  height: number
-  scale: number
-
-  action: string
-  debugMode: boolean
-  modelPath: string
+  width: number;
+  height: number;
+  scale: number;
+  action: string;
+  debugMode: boolean;
+  modelPath: string;
+  visible?: boolean; // 新增属性，用于控制显示和隐藏
 }
 
 function MyThree(props: HSAttr) {
   const refContainer = useRef(null);
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const [dimensions, setDimensions] = useState({ width: props.width, height: props.height });
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) { // Mobile breakpoint
+        setDimensions({
+          width: props.width * 0.6, // Scale down for mobile
+          height: props.height * 0.6,
+        });
+      } else {
+        setDimensions({ width: props.width, height: props.height });
+      }
+    };
+
+    handleResize(); // Set initial dimensions
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [props.width, props.height]);
+
+  useEffect(() => {
+    if (!props.visible) return; // 如果不可见，跳过初始化逻辑
+
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('jsm/libs/draco/');
     const gltfLoader = new GLTFLoader();
@@ -30,19 +52,20 @@ function MyThree(props: HSAttr) {
       alpha: true
     });
     renderer.shadowMap.enabled = true;
-    renderer.setSize(props.width, props.height);
+    renderer.setSize(dimensions.width, dimensions.height);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    let container: HTMLElement
+    let container: HTMLElement;
     if (refContainer.current) {
       container = refContainer.current as HTMLElement;
     } else {
-      return
+      return;
     }
+
     async function fetchData() {
       const gltf = await gltfLoader.loadAsync(props.modelPath, onprogress = (event) => {
         const { loaded, total } = event;
-        setProgressPercentage(1.0 * loaded / total * 100)
+        setProgressPercentage((loaded / total) * 100);
       });
       createModelView(container, renderer, gltf);
     }
@@ -53,8 +76,8 @@ function MyThree(props: HSAttr) {
       for (let i = container.children.length - 1; i >= 0; i--) {
         container.removeChild(container.children[i]);
       }
-    }
-  }, []);
+    };
+  }, [dimensions, props.visible]);
 
   const createGUI = (actions: Map<string, THREE.AnimationAction>, activeAction: THREE.AnimationAction) => {
     const gui = new GUI({ width: 280 });
@@ -88,44 +111,18 @@ function MyThree(props: HSAttr) {
         .play();
     }
 
-
-    // const params = {
-    //   edgeStrength: 3.0,
-    //   edgeGlow: 0.0,
-    //   edgeThickness: 1.0,
-    //   pulsePeriod: 0,
-    //   rotate: false,
-    //   usePatternTexture: false
-    // };
-
-    // gui.add(params, 'edgeStrength', 0.01, 10).onChange(function (value) {
-    // });
-    // gui.add(params, 'edgeGlow', 0.0, 1).onChange(function (value) {
-    // });
-
-    return gui
-  }
+    return gui;
+  };
 
   const createModelView = (container: HTMLElement, renderer: THREE.WebGLRenderer, gltf: GLTF) => {
     // === THREE.JS CODE START ===
-    console.log("Add gltf scene")
+    console.log("Add gltf scene");
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, props.width / props.height, 0.1, 20);
+    const camera = new THREE.PerspectiveCamera(50, dimensions.width / dimensions.height, 0.1, 20);
     camera.position.set(0.1, 0.1, 1.25);
-    // camera.updateProjectionMatrix();
 
-    // gltf.scene.scale.set( 0.008, 0.008, 0.008 );
-    // const scale = 0.0035
-    // const scale = 0.5
     const scale = props.scale;
     gltf.scene.scale.set(scale, scale, scale);
-
-    // function onWindowResize() {
-    //   camera.aspect = window.innerWidth / window.innerHeight;
-    //   camera.updateProjectionMatrix();
-    //   renderer.setSize( window.innerWidth, window.innerHeight );
-    // }
-    // window.addEventListener( 'resize', onWindowResize );
 
     const actions = new Map<string, THREE.AnimationAction>();
     const animations = gltf.animations;
@@ -162,15 +159,15 @@ function MyThree(props: HSAttr) {
       controls.update();
       controls.addEventListener("change", () => {
         console.log(controls.object.position);
-      })
+      });
       const stats = new Stats();
       container.appendChild(stats.dom);
       beforeAnimate = () => {
         stats.begin();
-      }
+      };
       afterAnimate = () => {
         stats.end();
-      }
+      };
     }
 
     const animate = function () {
@@ -181,11 +178,15 @@ function MyThree(props: HSAttr) {
       afterAnimate();
     };
     animate();
+  };
+
+  if (!props.visible) {
+    return null; // 如果不可见，直接返回 null
   }
 
   return (
     <div style={{
-       width: props.width, height: props.height,
+       width: dimensions.width, height: dimensions.height,
        position: "fixed",
        bottom: 0,
        left: 0, 

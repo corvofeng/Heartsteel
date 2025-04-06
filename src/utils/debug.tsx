@@ -1,6 +1,6 @@
 
 function isDebug() {
-  return false;
+  return true;
   // return process.env.NODE_ENV === 'development';
 }
 export {
